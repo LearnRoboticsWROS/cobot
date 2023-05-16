@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- put world file as argument-->
+    <arg name="world_file" default = "$(find cobot_simulation)/worlds/lab.world" />
+    
+    <!-- Launch Gazebo world-->
+    <include file ="$(find gazebo_ros)/launch/empty_world.launch" >
+        <arg name="use_sim_time" value="true"/>
+        <arg name="debug" value="false"/>
+        <arg name="gui" value="true"/>
+        <arg name="world_name" value="$(arg world_file)"/>
+    </include>
+
+</launch>

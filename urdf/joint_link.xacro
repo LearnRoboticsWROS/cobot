@@ -1,0 +1,72 @@
+<?xml version = "1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    
+    <xacro:macro name="cobot_link_cylinder" params="name origin_xyz origin_rpy radius length mass ixx ixy ixz iyy iyz izz">
+        <link name="${name}">
+            <inertial>
+                <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
+                <mass value="${mass}"/>
+                <inertia ixx="${ixx}" ixy="${ixy}" ixz="${ixz}" iyy="${iyy}" iyz="${iyz}" izz="${izz}"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <cylinder radius="${radius}" length="${length}"/>
+                </geometry>
+                <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <cylinder radius="${radius}" length="${length}"/>
+                </geometry>
+                <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
+            </collision>
+        </link>
+    </xacro:macro>
+
+    <xacro:macro name="cobot_link_box" params="name origin_xyz origin_rpy size mass ixx ixy ixz iyy iyz izz">
+        <link name="${name}">
+            <inertial>
+                <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
+                <mass value="${mass}"/>
+                <inertia ixx="${ixx}" ixy="${ixy}" ixz="${ixz}" iyy="${iyy}" iyz="${iyz}" izz="${izz}"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <box size="${size}"/>
+                </geometry>
+                <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <box size="${size}"/>
+                </geometry>
+                <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
+            </collision>
+        </link>
+    </xacro:macro>
+
+    <xacro:macro name="cobot_joint" params="name type parent child axis limit_l limit_u limit_v limit_e origin_xyz origin_rpy">
+        <joint name="${name}" type="${type}">
+            <parent link="${parent}"/>
+            <child link="${child}"/>
+            <axis xyz="${axis}"/>
+            <limit lower="${limit_l}" upper="${limit_u}" velocity="${limit_v}" effort="${limit_e}"/>
+            <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
+        </joint> 
+    </xacro:macro>
+
+    <xacro:macro name="transmission" params="name joint_name actuator_name">
+        <transmission name="${name}" >
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name = "${joint_name}" >
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${actuator_name}" >
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+    </xacro:macro>
+
+</robot>
