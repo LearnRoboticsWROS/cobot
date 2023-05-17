@@ -50,5 +50,7 @@
     
     <node name="rqt_reconfigure" pkg="rqt_gui" type="rqt_gui" />
 
+    <!-- need to spawn the robot in a world-->
+    <!-- try--!
     
 </launch>
