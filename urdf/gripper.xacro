@@ -1,0 +1,105 @@
+<?xml version = "1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- Model a gripper-->
+    <xacro:macro name="gripper" params="parent origin_xyz">
+
+        <!-- Gripper connector-->
+        <xacro:cobot_link_box name="gripper_connector" origin_xyz="0.0 0.0 0.0125" origin_rpy="0 0 0" 
+                            size="0.03 0.150 0.03" 
+                            mass="1" ixx="0.00195" ixy="0" ixz="0" iyy="0.00195" iyz="0" izz="0.00015"/>
+
+        <joint name="gripper_joint" type="revolute">
+            <parent link="${parent}"/>
+            <child link="gripper_connector"/>
+            <axis xyz="0 0 1"/>
+            <limit lower="-3.14" upper="3.14" velocity="0.5" effort="200"/>
+            <origin xyz="${origin_xyz}" rpy="0 0 0"/>
+            <dynamics damping="1" friction="1"/>
+        </joint> 
+
+        <xacro:transmission name="trans_gripper_joint" 
+                        joint_name="gripper_joint" 
+                        actuator_name="motor_gripper_joint" />
+
+        <!-- Gripper right-->
+        <xacro:cobot_link_box name="gripper_right" origin_xyz="0.0 0.0 0.05" origin_rpy="0 0 0" 
+                            size="0.01 0.01 0.1" 
+                            mass="0.5" ixx="0.00042" ixy="0" ixz="0" iyy="0.00042" iyz="0" izz="0.0000083"/>
+
+        <joint name="gripper_right_joint" type="prismatic">
+            <parent link="gripper_connector"/>
+            <child link="gripper_right"/>
+            <axis xyz="0 1 0"/>
+            <limit lower="0" upper="0.055" velocity="0.5" effort="200"/>
+            <origin xyz="0 -0.065 0.03" rpy="0 0 0"/>
+            <dynamics damping="1" friction="1"/>
+        </joint>
+
+        <xacro:transmission name="trans_gripper_right_joint" 
+                        joint_name="gripper_right_joint" 
+                        actuator_name="motor_gripper_right_joint" />
+
+        <!-- Gripper left-->
+        <xacro:cobot_link_box name="gripper_left" origin_xyz="0.0 0.0 0.05" origin_rpy="0 0 0" 
+                            size="0.01 0.01 0.1" 
+                            mass="0.5" ixx="0.00042" ixy="0" ixz="0" iyy="0.00042" iyz="0" izz="0.0000083"/>
+
+        <joint name="gripper_left_joint" type="prismatic">
+            <parent link="gripper_connector"/>
+            <child link="gripper_left"/>
+            <axis xyz="0 1 0"/>
+            <limit lower="-0.055" upper="0" velocity="0.5" effort="200"/>
+            <origin xyz="0 0.065 0.03" rpy="0 0 0"/>
+            <dynamics damping="1" friction="1"/>
+            <mimic joint="gripper_right_joint" multiplier="-1.0" offset="0" />
+        </joint>
+
+        <xacro:transmission name="trans_gripper_left_joint" 
+                        joint_name="gripper_left_joint" 
+                        actuator_name="motor_gripper_left_joint" />
+
+        <!-- ros control plugin with mimic-->
+        <xacro:macro name="mimic_joint_plugin_gazebo" params="parent_joint mimic_joint has_pid:=false multiplier:=-1.0 offset:=0 sensitiveness:=0.0 max_effort:=200 robot_namespace:='/cobot'">
+            <gazebo>
+                <plugin name="${mimic_joint}_mimic_joint_plugin" filename="libroboticsgroup_gazebo_mimic_joint_plugin.so">
+                    <joint>${parent_joint}</joint>
+                    <mimicJoint>${mimic_joint}</mimicJoint>
+                    <xacro:if value="${has_pid}">
+                        <hasPID />
+                    </xacro:if>
+                    <multiplier>${multiplier}</multiplier>
+                    <offset>${offset}</offset>
+                    <sensitiveness>${sensitiveness}</sensitiveness>
+                    <maxEffort>${max_effort}</maxEffort>
+                    <xacro:unless value="${robot_namespace == '/cobot'}">
+                        <robotNamespace>($robot_namespace)</robotNamespace>
+                    </xacro:unless>
+                </plugin>
+            </gazebo>
+        </xacro:macro>
+
+        <xacro:mimic_joint_plugin_gazebo  parent_joint="gripper_right_joint" mimic_joint="gripper_left_joint" 
+                                            has_pid="false" multiplier="-1.0" max_effort="200" />
+
+        <gazebo>
+            <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
+                <arm>
+                    <arm_name>gripper</arm_name>
+                    <palm_link>gripper_connector</palm_link>
+                    <gripper_link> gripper_right </gripper_link>
+                    <gripper_link> gripper_left </gripper_link>
+                </arm>
+                <forces_angle_tolerance>100</forces_angle_tolerance>
+                <update_rate>10</update_rate>
+                <grip_count_threshold>3</grip_count_threshold>
+                <max_grip_count>10</max_grip_count>
+                <release_tolerance>0.001</release_tolerance>
+                <disable_collision_on_attach>false</disable_collision_on_attach>
+                <contact_topic>__default_topic__</contact_topic>
+            </plugin>
+        </gazebo>
+
+    </xacro:macro>
+
+</robot>

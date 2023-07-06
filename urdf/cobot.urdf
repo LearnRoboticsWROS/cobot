@@ -2,6 +2,7 @@
 <robot name="cobot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:include filename="$(find cobot_simulation)/urdf/joint_link.xacro"/>
+    <xacro:include filename="$(find cobot_simulation)/urdf/gripper.xacro"/>
 
     <!-- Fix the cobot to the world-->
     <link name="world"/>
@@ -62,10 +63,11 @@
                             origin_xyz="0 0.0 0.180" origin_rpy="0 1.57 0" />
 
     
-
     <!-- Build the TCP or end effector-->
 
-     
+    <xacro:gripper parent="link5" origin_xyz="0 0.0 0.125" />
+
+    <!--
     <xacro:cobot_link_box name="tcp_connector" origin_xyz="0.0 0.0 0.0125" origin_rpy="0 0 0" 
                             size="0.03 0.150 0.03" 
                             mass="1" ixx="0.00195" ixy="0" ixz="0" iyy="0.00195" iyz="0" izz="0.00015"/>
@@ -89,6 +91,7 @@
     <xacro:cobot_joint name="tcp_connector__gripper_left" type="prismatic" parent="tcp_connector" child="gripper_left" 
                             axis="0 1 0" limit_l="-0.055" limit_u="0" limit_v="0.5" limit_e="1000" 
                             origin_xyz="0 0.065 0.03" origin_rpy="0 0 0" />
+    -->
     <!-- put transmission in each joint-->
 
     <xacro:transmission name="trans_base_link__link1" 
@@ -115,7 +118,7 @@
                         actuator_name="motor_link4__link5" />
 
     
-
+    <!--
     <xacro:transmission name="trans_link5__tcp_connector" 
                         joint_name="link5__tcp_connector" 
                         actuator_name="motor_link5__tcp_connector" />
@@ -127,6 +130,7 @@
     <xacro:transmission name="trans_tcp_connector__gripper_left" 
                         joint_name="tcp_connector__gripper_left" 
                         actuator_name="motor_tcp_connector__gripper_left" />
+    -->
 
     <!-- Gazebo plugin-->
     <gazebo>
