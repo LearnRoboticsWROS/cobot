@@ -1,0 +1,32 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/tutorial/catkin_ws/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/tutorial/catkin_ws/src/cobot_simulation/include/**",
+        "/home/tutorial/catkin_ws/src/gazebo-pkgs/gazebo_grasp_plugin/include/**",
+        "/home/tutorial/catkin_ws/src/gazebo-pkgs/gazebo_state_plugins/include/**",
+        "/home/tutorial/catkin_ws/src/gazebo-pkgs/gazebo_test_tools/include/**",
+        "/home/tutorial/catkin_ws/src/gazebo-pkgs/gazebo_version_helpers/include/**",
+        "/home/tutorial/catkin_ws/src/gazebo-pkgs/gazebo_world_plugin_loader/include/**",
+        "/home/tutorial/catkin_ws/src/node_practice/include/**",
+        "/home/tutorial/catkin_ws/src/general-message-pkgs/object_msgs_tools/include/**",
+        "/home/tutorial/catkin_ws/src/roboticsgroup_gazebo_plugins/include/**",
+        "/home/tutorial/catkin_ws/src/rumba_pathway/include/**",
+        "/home/tutorial/catkin_ws/src/tutorials_practice/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
