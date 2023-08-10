@@ -1,7 +1,6 @@
-<?xml version="1.0"?>
-
 <launch>
 
+    <!-- Launch Gazebo -->
     <!-- Associate to the robot description parameter, the urdf file that model the robot-->
     <param name="robot_description" command = "$(find xacro)/xacro --inorder $(find cobot_simulation)/urdf/cobot_camera.xacro" />
 
@@ -10,49 +9,29 @@
     <arg name="y" default="0" />
     <arg name="z" default="0" />
 
-    <!-- Cube-->
-    <param name="cube" command = "$(find xacro)/xacro --inorder $(find cobot_simulation)/urdf/cube_pick_place.urdf" />
-
-    <!-- Set the position of the cube in empty world-->
-    <arg name="x_c" default="1" />
-    <arg name="y_c" default="1" />
-    <arg name="z_c" default="0.025" />
-
-
-    <!-- Launch Gezabo world in paused-->
+     <!-- Launch Gezabo world in paused-->
     <include file = "$(find gazebo_ros)/launch/empty_world.launch" >
         <arg name="use_sim_time" value="true"/>
         <arg name="debug" value="false"/>
         <arg name="gui" value="true"/>
         <arg name="paused" value="true" />
-    </include>   
+    </include> 
 
     <!-- Spawn the robot using the package gazebo_ros-->
     <node name="spawn_the_robot" pkg="gazebo_ros" type="spawn_model"  output="screen" args="-urdf -param robot_description -model cobot -x $(arg x) -y $(arg y) -z $(arg z)" />
-    
-    <!-- Spawn the cube using the package gazebo_ros-->
-    <node name="spawn_the_cube" pkg="gazebo_ros" type="spawn_model"  output="screen" args="-urdf -param cube -model cube_pick_place -x $(arg x_c) -y $(arg y_c) -z $(arg z_c)" />
-    
-
-
-    <!-- Load the controllers-->
-    <rosparam command="load" file="$(find cobot_simulation)/config/joints_controllers.yaml"/>
 
     <!-- Load the node controller manager-->
     <node name="controller_spawner" pkg="controller_manager" type="spawner"  
             output="screen" respawn="false" ns="/cobot"
             args="joint_state_controller
-                joint1_position_controller
-                joint2_position_controller
-                joint3_position_controller
-                joint4_position_controller
-                joint5_position_controller
-                joint6_position_controller
-                gripper_right_position_controller
-                gripper_left_position_controller
+                arm_controller
+                gripper_controller
                 --timeout 60 ">
-        
     </node>
+
+     <!-- Load the controllers-->
+    <rosparam command="load" file="$(find cobot_simulation)/config/cobot_joint_states.yaml"/>
+    <rosparam command="load" file="$(find cobot_simulation)/config/trajectory_control.yaml"/>
 
     <!-- Convert joint states to TF transform for rviz and rqt-->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"  
@@ -61,7 +40,19 @@
         
     </node>
 
-    
-    <node name="rqt_reconfigure" pkg="rqt_gui" type="rqt_gui" />
-    
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <remap from="/joint_states" to="/cobot/joint_states"/>
+
+    <include file= "$(find cobot_moveit_config)/launch/planning_context.launch" >
+        <arg name="load_robot_description" value="false" />
+    </include>
+
+    <include file= "$(find cobot_moveit_config)/launch/move_group.launch" >
+        <arg name="publish_monitored_planning_scene" value="true" />
+    </include>
+
+    <include file= "$(find cobot_moveit_config)/launch/moveit_rviz.launch" >
+        <arg name="rviz_config" value="$(find cobot_moveit_config)/launch/moveit.rviz" />
+    </include>
+
 </launch>

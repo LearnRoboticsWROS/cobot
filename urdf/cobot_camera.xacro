@@ -12,15 +12,15 @@
 
     <!-- Fix the cobot to the world-->
     <link name="world"/>
-        
-    <joint name="fixed" type="fixed">
-        <parent link="world"/>
-        <child link="base_link"/>
-    </joint>
 
     <xacro:cobot_link_cylinder name="base_link" origin_xyz="0.0 0.0 0.025" origin_rpy= "0 0 0" 
                             radius="0.1" length="0.05" 
                             mass="1" ixx="0.01625" ixy="0" ixz="0" iyy="0.01625" iyz="0" izz="0.005" />
+    
+    <joint name="fixed" type="fixed">
+        <parent link="world"/>
+        <child link="base_link"/>
+    </joint>
 
     <xacro:cobot_link_cylinder name="link1" origin_xyz="0.0 0.0 0.132" origin_rpy= "0 0 0" 
                             radius="0.05" length="0.264" 
