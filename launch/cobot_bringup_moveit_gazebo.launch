@@ -33,7 +33,7 @@
     <rosparam command="load" file="$(find cobot_simulation)/config/cobot_joint_states.yaml"/>
     <rosparam command="load" file="$(find cobot_simulation)/config/trajectory_control.yaml"/>
 
-    <!-- Convert joint states to TF transform for rviz and rqt-->
+     <!-- Convert joint states to TF transform for rviz and rqt-->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"  
             output="screen" respawn="false">
             <remap from="/joint_states" to="/cobot/joint_states"/>
@@ -43,16 +43,19 @@
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
     <remap from="/joint_states" to="/cobot/joint_states"/>
 
-    <include file= "$(find cobot_internet_moveit_config)/launch/planning_context.launch" >
+    <include file= "$(find cobot_moveit_gazebo_config)/launch/planning_context.launch" >
         <arg name="load_robot_description" value="false" />
     </include>
 
-    <include file= "$(find cobot_internet_moveit_config)/launch/move_group.launch" >
+    <include file= "$(find cobot_moveit_gazebo_config)/launch/move_group.launch" >
         <arg name="publish_monitored_planning_scene" value="true" />
     </include>
 
-    <include file= "$(find cobot_internet_moveit_config)/launch/moveit_rviz.launch" >
-        <arg name="rviz_config" value="$(find cobot_internet_moveit_config)/launch/moveit.rviz" />
+    <include file= "$(find cobot_moveit_gazebo_config)/launch/moveit_rviz.launch" >
+        <arg name="rviz_config" value="$(find cobot_moveit_gazebo_config)/launch/moveit.rviz" />
     </include>
+
+
+
 
 </launch>

@@ -54,7 +54,9 @@
             <limit lower="-0.055" upper="0" velocity="0.5" effort="200"/>
             <origin xyz="0 0.065 0.03" rpy="0 0 0"/>
             <dynamics damping="1" friction="1"/>
+            <!--
             <mimic joint="gripper_right_joint" multiplier="-1.0" offset="0" />
+            -->
         </joint>
 
         <xacro:transmission name="trans_gripper_left_joint" 
@@ -62,6 +64,7 @@
                         actuator_name="motor_gripper_left_joint" />
 
         <!-- ros control plugin with mimic-->
+        
         <xacro:macro name="mimic_joint_plugin_gazebo" params="parent_joint mimic_joint has_pid:=false multiplier:=-1.0 offset:=0 sensitiveness:=0.0 max_effort:=200 robot_namespace:='/cobot'">
             <gazebo>
                 <plugin name="${mimic_joint}_mimic_joint_plugin" filename="libroboticsgroup_gazebo_mimic_joint_plugin.so">
@@ -80,9 +83,11 @@
                 </plugin>
             </gazebo>
         </xacro:macro>
+        
 
         <xacro:mimic_joint_plugin_gazebo  parent_joint="gripper_right_joint" mimic_joint="gripper_left_joint" 
                                             has_pid="false" multiplier="-1.0" max_effort="200" />
+    
 
         <gazebo>
             <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
