@@ -1,0 +1,65 @@
+<launch>
+
+    <!-- Launch Gazebo -->
+    <!-- Associate to the robot description parameter, the urdf file that model the robot-->
+    <param name="robot_description" command = "$(find xacro)/xacro --inorder $(find cobot_simulation)/urdf/cobot_mimic_effort_camera.xacro" />
+
+    <!-- Set the position in empty world-->
+    <arg name="x" default="0" />
+    <arg name="y" default="0" />
+    <arg name="z" default="0" />
+
+    <!-- put world file as argument-->
+    <arg name="world_file" default = "$(find cobot_simulation)/worlds/pick_place_scene.world" />
+
+     <!-- Launch Gezabo world in paused-->
+    <include file = "$(find gazebo_ros)/launch/empty_world.launch" >
+        <arg name="use_sim_time" value="true"/>
+        <arg name="debug" value="false"/>
+        <arg name="gui" value="true"/>
+        <arg name="paused" value="true" />
+        <arg name="world_name" value="$(arg world_file)"/>
+    </include> 
+
+    <!-- Spawn the robot using the package gazebo_ros-->
+    <node name="spawn_the_robot" pkg="gazebo_ros" type="spawn_model"  output="screen" args="-urdf -param robot_description -model cobot -x $(arg x) -y $(arg y) -z $(arg z)" />
+
+    <!-- Load the node controller manager-->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner"  
+            output="screen" respawn="false" ns="/cobot"
+            args="joint_state_controller
+                arm_controller
+                hand_controller
+                --timeout 60 ">
+    </node>
+
+     <!-- Load the controllers-->
+    <rosparam command="load" file="$(find cobot_simulation)/config/cobot_joint_states.yaml"/>
+    <rosparam command="load" file="$(find cobot_simulation)/config/mimic_effort_trajectory.yaml"/>
+
+     <!-- Convert joint states to TF transform for rviz and rqt-->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"  
+            output="screen" respawn="false">
+            <remap from="/joint_states" to="/cobot/joint_states"/>
+        
+    </node>
+
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <remap from="/joint_states" to="/cobot/joint_states"/>
+
+    <include file= "$(find cobot_mimic_effort_moveit_config)/launch/planning_context.launch" >
+        <arg name="load_robot_description" value="false" />
+    </include>
+
+    <include file= "$(find cobot_mimic_effort_moveit_config)/launch/move_group.launch" >
+        <arg name="publish_monitored_planning_scene" value="true" />
+    </include>
+
+    <include file= "$(find cobot_mimic_effort_moveit_config)/launch/moveit_rviz.launch" >
+        <arg name="rviz_config" value="$(find cobot_mimic_effort_moveit_config)/launch/moveit.rviz" />
+    </include>
+
+
+
+
+</launch>

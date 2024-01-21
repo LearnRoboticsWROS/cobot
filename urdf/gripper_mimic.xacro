@@ -4,7 +4,7 @@
     <xacro:include filename="$(find cobot_simulation)/urdf/joint_link.xacro"/>
 
     <!-- Model a gripper-->
-    <xacro:macro name="gripper" params="parent origin_xyz">
+    <xacro:macro name="gripper_mimic" params="parent origin_xyz">
 
         <!-- Gripper connector-->
         <xacro:cobot_link_box name="gripper_connector" origin_xyz="0.0 0.0 0.0125" origin_rpy="0 0 0" 
@@ -17,7 +17,7 @@
             <axis xyz="0 0 1"/>
             <limit lower="-3.14" upper="3.14" velocity="0.5" effort="200"/>
             <origin xyz="${origin_xyz}" rpy="0 0 0"/>
-            <dynamics damping="1" friction="1"/>
+            <dynamics damping="1" friction="10"/>
         </joint> 
 
         <xacro:transmission name="trans_gripper_joint" 
@@ -35,10 +35,10 @@
             <axis xyz="0 1 0"/>
             <limit lower="0" upper="0.055" velocity="0.5" effort="200"/>
             <origin xyz="0 -0.065 0.03" rpy="0 0 0"/>
-            <dynamics damping="1" friction="2"/>
+            <dynamics damping="1" friction="10"/>
         </joint>
 
-        <xacro:transmission name="trans_gripper_right_joint" 
+        <xacro:transmission_effort name="trans_gripper_right_joint" 
                         joint_name="gripper_right_joint" 
                         actuator_name="motor_gripper_right_joint" />
 
@@ -53,13 +53,11 @@
             <axis xyz="0 1 0"/>
             <limit lower="-0.055" upper="0" velocity="0.5" effort="200"/>
             <origin xyz="0 0.065 0.03" rpy="0 0 0"/>
-            <dynamics damping="1" friction="2"/>
-            <!--
+            <dynamics damping="1" friction="1"/>
             <mimic joint="gripper_right_joint" multiplier="-1.0" offset="0" />
-            -->
         </joint>
 
-        <xacro:transmission name="trans_gripper_left_joint" 
+        <xacro:transmission_effort name="trans_gripper_left_joint" 
                         joint_name="gripper_left_joint" 
                         actuator_name="motor_gripper_left_joint" />
 
@@ -67,7 +65,7 @@
         
         <xacro:macro name="mimic_joint_plugin_gazebo" params="parent_joint mimic_joint has_pid:=false multiplier:=-1.0 offset:=0 sensitiveness:=0.0 max_effort:=200 robot_namespace:='/cobot'">
             <gazebo>
-                <plugin name="${mimic_joint}_mimic_joint_plugin" filename="libroboticsgroup_gazebo_mimic_joint_plugin.so">
+                <plugin name="${mimic_joint}_mimic_joint_plugin" filename="libroboticsgroup_upatras_gazebo_mimic_joint_plugin.so">
                     <joint>${parent_joint}</joint>
                     <mimicJoint>${mimic_joint}</mimicJoint>
                     <xacro:if value="${has_pid}">
@@ -87,9 +85,8 @@
 
         <xacro:mimic_joint_plugin_gazebo  parent_joint="gripper_right_joint" mimic_joint="gripper_left_joint" 
                                             has_pid="false" multiplier="-1.0" max_effort="200" />
-    
-
         <gazebo>
+
             <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
                 <arm>
                     <arm_name>gripper</arm_name>
@@ -99,13 +96,15 @@
                 </arm>
                 <forces_angle_tolerance>100</forces_angle_tolerance>
                 <update_rate>10</update_rate>
-                <grip_count_threshold>3</grip_count_threshold>
+                <grip_count_threshold>4</grip_count_threshold>
                 <max_grip_count>10</max_grip_count>
-                <release_tolerance>0.001</release_tolerance>
+                <release_tolerance>0.005</release_tolerance>
                 <disable_collision_on_attach>false</disable_collision_on_attach>
                 <contact_topic>__default_topic__</contact_topic>
             </plugin>
         </gazebo>
+
+
 
     </xacro:macro>
 

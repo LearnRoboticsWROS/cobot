@@ -4,7 +4,7 @@
     <xacro:include filename="$(find cobot_simulation)/urdf/joint_link.xacro"/>
 
     <!-- Model a gripper-->
-    <xacro:macro name="gripper" params="parent origin_xyz">
+    <xacro:macro name="gripper_mimic_effort" params="parent origin_xyz">
 
         <!-- Gripper connector-->
         <xacro:cobot_link_box name="gripper_connector" origin_xyz="0.0 0.0 0.0125" origin_rpy="0 0 0" 
@@ -35,10 +35,10 @@
             <axis xyz="0 1 0"/>
             <limit lower="0" upper="0.055" velocity="0.5" effort="200"/>
             <origin xyz="0 -0.065 0.03" rpy="0 0 0"/>
-            <dynamics damping="1" friction="2"/>
+            <dynamics damping="1" friction="1"/>
         </joint>
 
-        <xacro:transmission name="trans_gripper_right_joint" 
+        <xacro:transmission_effort name="trans_gripper_right_joint" 
                         joint_name="gripper_right_joint" 
                         actuator_name="motor_gripper_right_joint" />
 
@@ -53,13 +53,11 @@
             <axis xyz="0 1 0"/>
             <limit lower="-0.055" upper="0" velocity="0.5" effort="200"/>
             <origin xyz="0 0.065 0.03" rpy="0 0 0"/>
-            <dynamics damping="1" friction="2"/>
-            <!--
+            <dynamics damping="1" friction="1"/>
             <mimic joint="gripper_right_joint" multiplier="-1.0" offset="0" />
-            -->
         </joint>
 
-        <xacro:transmission name="trans_gripper_left_joint" 
+        <xacro:transmission_effort name="trans_gripper_left_joint" 
                         joint_name="gripper_left_joint" 
                         actuator_name="motor_gripper_left_joint" />
 
