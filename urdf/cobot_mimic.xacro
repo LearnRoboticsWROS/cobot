@@ -112,5 +112,34 @@
         </plugin>
     </gazebo>
 
+    <!-- Make the robot more fancy :)-->
+    <gazebo reference="base_link" >
+        <material>Gazebo/Blue</material>
+    </gazebo>
+    <gazebo reference="link1" >
+        <material>Gazebo/Yellow</material>
+    </gazebo>
+    <gazebo reference="link2" >
+        <material>Gazebo/Black</material>
+    </gazebo>
+    <gazebo reference="link3" >
+        <material>Gazebo/Yellow</material>
+    </gazebo>
+    <gazebo reference="link4" >
+        <material>Gazebo/Black</material>
+    </gazebo>
+    <gazebo reference="link5" >
+        <material>Gazebo/Yellow</material>
+    </gazebo>
+    <gazebo reference="gripper_connector" >
+        <material>Gazebo/Black</material>
+    </gazebo>
+    <gazebo reference="gripper_right" >
+        <material>Gazebo/Blue</material>
+    </gazebo>
+    <gazebo reference="gripper_left" >
+        <material>Gazebo/Blue</material>
+    </gazebo>
+
     
 </robot>
